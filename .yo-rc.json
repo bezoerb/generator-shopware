@@ -1,0 +1,9 @@
+{
+  "generator-node": {
+    "promptValues": {
+      "authorName": "Ben Zörb",
+      "authorEmail": "ben@sommerlaune.com",
+      "authorUrl": "https://www.sommerlaune.com/"
+    }
+  }
+}

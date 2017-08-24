@@ -1,0 +1,62 @@
+{
+  "name": "generator-shopware",
+  "version": "0.0.0",
+  "description": "Yeoman generator for shopware.",
+  "homepage": "https://github.com/bezoerb/generator-shopware",
+  "author": {
+    "name": "Ben Zörb",
+    "email": "ben@sommerlaune.com",
+    "url": "https://www.sommerlaune.com/"
+  },
+  "files": [
+    "generators"
+  ],
+  "main": "generators/index.js",
+  "keywords": [
+    "shopware",
+    "gulp",
+    "browsersync",
+    "webpack",
+    "yeoman",
+    "scaffold",
+    "generator",
+    "theme",
+    "yeoman-generator"
+  ],
+  "devDependencies": {
+    "coveralls": "^2.13.1",
+    "eslint": "^4.1.0",
+    "eslint-config-xo-space": "^0.16.0",
+    "jest": "^19.0.2",
+    "jest-cli": "^20.0.0",
+    "nsp": "^2.6.3",
+    "yeoman-assert": "^3.0.0",
+    "yeoman-test": "^1.6.0"
+  },
+  "dependencies": {
+    "chalk": "^1.1.3",
+    "generator-generator": "^3.2.0",
+    "globby": "^6.1.0",
+    "inquirer": "^3.2.2",
+    "lodash": "^4.17.4",
+    "yeoman-generator": "^1.0.0",
+    "yosay": "^2.0.0"
+  },
+  "jest": {
+    "testEnvironment": "node"
+  },
+  "scripts": {
+    "prepublish": "nsp check",
+    "pretest": "eslint . --fix",
+    "test": "jest"
+  },
+  "eslintConfig": {
+    "extends": "xo-space",
+    "env": {
+      "jest": true,
+      "node": true
+    }
+  },
+  "repository": "bezoerb/generator-shopware",
+  "license": "MIT"
+}
