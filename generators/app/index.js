@@ -2,35 +2,28 @@
 const Generator = require('yeoman-generator');
 const chalk = require('chalk');
 const yosay = require('yosay');
+const ui = require('shopware-cli/lib/ui');
+const shopwareCli = require('shopware-cli');
+const globby = require('globby');
 
 module.exports = class extends Generator {
   prompting() {
-    // Have Yeoman greet the user.
     this.log(yosay(
       'Welcome to the fabulous ' + chalk.red('shopware') + ' generator!'
     ));
 
-    const prompts = [{
-      type: 'confirm',
-      name: 'someAnswer',
-      message: 'Would you like to enable this option?',
-      default: true
-    }];
-
-    return this.prompt(prompts).then(props => {
-      // To access props later use this.props.someAnswer;
-      this.props = props;
-    });
+    return globby(['*/shopware.php', '.shopware-cli.json'], {cwd: this.env.cwd})
+      .then(files => ui.questions({initial: files.length === 0}).then(props => {
+        this.props = props;
+        this.config.set(props);
+      }));
   }
 
   writing() {
-    this.fs.copy(
-      this.templatePath('dummyfile.txt'),
-      this.destinationPath('dummyfile.txt')
-    );
+    return shopwareCli('install', {}, this.props);
   }
 
   install() {
-    this.installDependencies();
+    this.log(`I'm all done. To add a theme run ${chalk.green('yo shopware:theme')}`);
   }
 };
