@@ -50,14 +50,6 @@
  * There are plenty more options available to us: explore them below.
  */
 
-// By default we use the `font-size: 0;` trick to remove whitespace between
-// items. Set this to true in order to use a markup-based strategy like
-// commenting out whitespace or minifying HTML.
-$inuit-use-markup-fix: false !default;
-
-
-
-
 
 /* Default/mandatory classes.
    ========================================================================== */
@@ -67,6 +59,7 @@ $inuit-use-markup-fix: false !default;
  * 2. We need to defensively reset any box-model properties.
  * 3. Use the negative margin trick for multi-row grids:
  *    http://csswizardry.com/2011/08/building-better-grid-systems/
+ * 4. Remove whitespace between items
  */
 
 .o-layout {
@@ -74,12 +67,8 @@ $inuit-use-markup-fix: false !default;
   margin:  0; /* [2] */
   padding: 0; /* [2] */
   list-style: none; /* [1] */
-  margin-left: -$inuit-global-spacing-unit; /* [3] */
-
-  @if ($inuit-use-markup-fix == false) {
-    font-size: 0;
-  }
-
+  .unitize(margin-left, -@global-spacing-unit); /* [3] */
+  font-size: 0; /* [4] */
 }
 
 
@@ -100,13 +89,10 @@ $inuit-use-markup-fix: false !default;
     display: inline-block; /* [2] */
     vertical-align: top; /* [3] */
     width: 100%; /* [4] */
-    padding-left: $inuit-global-spacing-unit; /* [5] */
+    .unitize(padding-left, @global-spacing-unit); /* [5] */
 
-    @if ($inuit-use-markup-fix == false) {
-      font-size: $inuit-global-font-size; /* [6] */
-      font-size: 1rem;
-    }
-
+    .unitize(font-size, @global-font-size); /* [6] */
+    font-size: 1rem;
   }
 
 
@@ -127,40 +113,40 @@ $inuit-use-markup-fix: false !default;
 
 
 .o-layout--tiny {
-  margin-left: -$inuit-global-spacing-unit-tiny;
+  .unitize(margin-left, -@global-spacing-unit-tiny);
 
   > .o-layout__item {
-    padding-left: $inuit-global-spacing-unit-tiny;
+    .unitize(padding-left, @global-spacing-unit-tiny);
   }
 
 }
 
 
 .o-layout--small {
-  margin-left: -$inuit-global-spacing-unit-small;
+  .unitize(margin-left, -@global-spacing-unit-small);
 
   > .o-layout__item {
-    padding-left: $inuit-global-spacing-unit-small;
+    .unitize(padding-left, @global-spacing-unit-small);
   }
 
 }
 
 
 .o-layout--large {
-  margin-left: -$inuit-global-spacing-unit-large;
+  .unitize(margin-left, -@global-spacing-unit-large);
 
   > .o-layout__item {
-    padding-left: $inuit-global-spacing-unit-large;
+    .unitize(padding-left, @global-spacing-unit-large);
   }
 
 }
 
 
 .o-layout--huge {
-  margin-left: -$inuit-global-spacing-unit-huge;
+  .unitize(margin-left, -@global-spacing-unit-huge);
 
   > .o-layout__item {
-    padding-left: $inuit-global-spacing-unit-huge;
+    .unitize(padding-left, @global-spacing-unit-huge);
   }
 
 }

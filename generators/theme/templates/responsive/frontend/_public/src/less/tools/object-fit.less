@@ -1,0 +1,24 @@
+///* ========================================================================
+//   #OBJECT-FIT
+//   ======================================================================== */
+
+/*
+  This mixin can be used to set the object-fit:
+  Uses font-family to polyfill IE/Edge
+  .object-fit(contain);
+  or object-fit and object-position:
+  .object-fit(cover, top);
+*/
+.object-fit(@fit: fill, @position: auto) when not (@position = auto) {
+  -o-object-fit: @fit;
+  object-fit: @fit;
+  -o-object-position: @position;
+  object-position: @position;
+  font-family: 'object-fit: @{fit}; object-position: @{position}';
+}
+
+.object-fit(@fit: fill, @position: auto) when (@position = auto) {
+  -o-object-fit: @fit;
+  object-fit: @fit;
+  font-family: 'object-fit: @{fit}';
+}

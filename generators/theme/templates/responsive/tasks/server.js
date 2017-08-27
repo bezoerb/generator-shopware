@@ -7,7 +7,7 @@ const getport = require('getport');
 const webpack = require('webpack');
 const webpackDevMiddleware = require('webpack-dev-middleware');
 const webpackHotMiddleware = require('webpack-hot-middleware');
-const pkg = require('../package.json.template');
+const pkg = require('../package.json');
 
 const nodeEnv = ENV !== 'prod';
 

@@ -79,7 +79,7 @@ const styles = (reload, cache = 0) => () => {
     .pipe($.if(PROD && '*.css', $.cssnano({safe: true, zindex: false})))
     // Add vendor prefixes
     .pipe($.postcss([
-      autoprefixer({browsers: AUTOPREFIXER_BROWSERS})
+      autoprefixer()
     ]))
     .pipe($.rename('dev.css'))
     .pipe($.size({title: 'styles'}))

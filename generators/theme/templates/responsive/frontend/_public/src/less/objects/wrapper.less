@@ -1,0 +1,51 @@
+/* ==========================================================================
+   #WRAPPER
+   ========================================================================== */
+
+/**
+ * Page-level constraining and wrapping elements.
+ */
+
+@wrapper-width: 1200;
+//
+///* stylelint-disable */
+//@if (type-of(@wrapper-width) != number) {
+//  @error "`#{@wrapper-width}` needs to be a number."
+//}
+///* stylelint-enable */
+
+.o-wrapper {
+  .clearfix();
+  .unitize(padding-right, @global-spacing-unit);
+  .unitize(padding-left, @global-spacing-unit);
+  margin-right: auto;
+  margin-left:  auto;
+  .unitize(max-width, @wrapper-width);
+}
+
+
+
+
+
+/* Size variants.
+   ========================================================================== */
+
+.o-wrapper--tiny {
+  .unitize(padding-right, @global-spacing-unit-tiny);
+  .unitize(padding-left, @global-spacing-unit-tiny);
+}
+
+.o-wrapper--small {
+  .unitize(padding-right, @global-spacing-unit-small);
+  .unitize(padding-left, @global-spacing-unit-small);
+}
+
+.o-wrapper--large {
+  .unitize(padding-right, @global-spacing-unit-large);
+  .unitize(padding-left, @global-spacing-unit-large);
+}
+
+.o-wrapper--huge {
+  .unitize(padding-right, @global-spacing-unit-huge);
+  .unitize(padding-left, @global-spacing-unit-huge);
+}

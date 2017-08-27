@@ -9,6 +9,8 @@ const capitalize = require('lodash/capitalize');
 const kebabCase = require('lodash/kebabCase');
 const findUp = require('find-up');
 const fs = require('fs-extra');
+const execa = require('execa');
+const mysql = require('mysql');
 
 module.exports = class extends Generator {
   prompting() {
@@ -18,7 +20,7 @@ module.exports = class extends Generator {
     ));
 
     this.props = this.config.getAll() || {};
-
+    const {dbname, dbuser, dbhost} = this.props;
     const rootpath = findUp.sync('.yo-rc.json', {cwd: this.env.cwd});
     if (rootpath) {
       this.props.rootpath = path.dirname(rootpath);
@@ -42,6 +44,12 @@ module.exports = class extends Generator {
             disabled: 'Unavailable at this time'
           }
         ]
+      }, {
+        type: 'confirm',
+        name: 'activate',
+        message: 'Do you want me to directly activate the new theme',
+        default: true,
+        when: () => dbname && dbuser && dbhost
       },
       {
         type: 'input',
@@ -91,13 +99,62 @@ module.exports = class extends Generator {
   }
 
   install() {
-    this.installDependencies({bower: false});
+    const promises = [
+      new Promise((resolve, reject) => {
+        this.installDependencies({bower: false, callback: err => (err && reject(err)) || resolve()});
+      })
+    ];
 
     // Symlink theme if we're not standalone
     if (this.props.rootpath) {
       const src = path.join(this.props.rootpath, 'themes/Frontend/', this.props.themename);
       const dest = path.join(this.props.rootpath, 'src/themes/Frontend/', this.props.themename);
-      return fs.ensureSymlink(path.relative(path.dirname(dest), src), dest);
+      promises.push(fs.ensureSymlink(path.relative(path.dirname(dest), src), dest));
     }
+
+    if (this.props.activate && this.props.rootpath) {
+      // Synchronice theme
+      promises.push(execa('php', [path.join(this.props.rootpath, 'src/bin/console'), 'sw:theme:synchronize']));
+
+      promises.push(new Promise((resolve, reject) => {
+        const {dbname, dbuser, dbpass, dbhost, dbport} = this.props;
+        const connection = mysql.createConnection({
+          host: dbhost,
+          port: dbport,
+          user: dbuser,
+          password: dbpass,
+          database: dbname
+        });
+
+        connection.connect(err => {
+          if (err) {
+            console.error('error connecting: ' + err.stack);
+            return reject(err);
+          }
+
+          // Fetch theme id
+          console.log('Activating theme');
+          connection.query(`SELECT id FROM s_core_templates WHERE template LIKE "${this.props.capitalizedThemename}"`, (err, results) => {
+            if (err) {
+              console.log(err);
+              return reject(err);
+            }
+
+            if (results.length) {
+              const {id} = results[0];
+              connection.query(`UPDATE s_core_shops SET template_id = ${id}, document_template_id = ${id} WHERE ${'`default`'} = 1`, err => {
+                if (err) {
+                  console.log(err);
+                  return reject(err);
+                }
+                connection.destroy(err => (err && reject(err)) || resolve());
+              });
+            }
+          });
+        });
+      }));
+    }
+
+    return Promise.all([promises]);
   }
 };

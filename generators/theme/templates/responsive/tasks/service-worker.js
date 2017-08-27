@@ -2,7 +2,7 @@
 const path = require('path');
 const gulp = require('gulp');
 const swPrecache = require('sw-precache');
-const pkg = require('../package.json.template');
+const pkg = require('../package.json');
 const {dir, paths, swconfig} = require('./helper/utils');
 
 /**

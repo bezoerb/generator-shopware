@@ -10,19 +10,15 @@
  */
 
 .o-box {
-  @include inuit-clearfix();
+  .clearfix();
   display: block; /* [1] */
-  padding: $inuit-global-spacing-unit;
+  .unitize(padding, @global-spacing-unit);
 
   > :last-child {
     margin-bottom: 0;
   }
 
 }
-
-
-
-
 
 /* Size variants.
    ========================================================================== */
@@ -32,17 +28,17 @@
 }
 
 .o-box--tiny {
-  padding: $inuit-global-spacing-unit-tiny;
+  .unitize(padding, @global-spacing-unit-tiny);
 }
 
 .o-box--small {
-  padding: $inuit-global-spacing-unit-small;
+  .unitize(padding, @global-spacing-unit-small);
 }
 
 .o-box--large {
-  padding: $inuit-global-spacing-unit-large;
+  .unitize(padding, @global-spacing-unit-large);
 }
 
 .o-box--huge {
-  padding: $inuit-global-spacing-unit-huge;
+  .unitize(padding, @global-spacing-unit-huge);
 }

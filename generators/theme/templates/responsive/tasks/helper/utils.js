@@ -11,7 +11,7 @@ const spawn = require('cross-spawn');
 const chalk = require('chalk');
 const execa = require('execa');
 const {ENV, swdir, shop} = require('./env');
-const pkg = require('../../package.json.template');
+const pkg = require('../../package.json');
 
 /**
  * Try to find shopware base directory
