@@ -16,6 +16,9 @@ describe('generator-shopware:theme', () => {
 
   it('creates files', () => {
     console.log(process.cwd());
+
+    const files = fs.readdirSync(process.cwd());
+    console.log(files);
     assert.file([
       '.babelrc',
       '.browserslistrc',
