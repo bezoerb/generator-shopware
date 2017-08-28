@@ -20,7 +20,6 @@ module.exports = class extends Generator {
     ));
 
     this.props = this.config.getAll() || {};
-    const {dbname, dbuser, dbhost} = this.props;
     const rootpath = findUp.sync('.yo-rc.json', {cwd: this.env.cwd});
     if (rootpath) {
       this.props.rootpath = path.dirname(rootpath);
@@ -49,7 +48,7 @@ module.exports = class extends Generator {
         name: 'activate',
         message: 'Do you want me to directly activate the new theme',
         default: true,
-        when: () => dbname && dbuser && dbhost
+        when: () => this.props.dbname && this.props.dbuser && this.props.dbhost
       },
       {
         type: 'input',
@@ -117,13 +116,12 @@ module.exports = class extends Generator {
       promises.push(execa('php', [path.join(this.props.rootpath, 'src/bin/console'), 'sw:theme:synchronize']));
 
       promises.push(new Promise((resolve, reject) => {
-        const {dbname, dbuser, dbpass, dbhost, dbport} = this.props;
         const connection = mysql.createConnection({
-          host: dbhost,
-          port: dbport,
-          user: dbuser,
-          password: dbpass,
-          database: dbname
+          host: this.props.dbhost,
+          port: this.props.dbport,
+          user: this.props.dbuser,
+          password: this.props.dbpass,
+          database: this.props.dbname
         });
 
         connection.connect(err => {
@@ -141,8 +139,9 @@ module.exports = class extends Generator {
             }
 
             if (results.length) {
-              const {id} = results[0];
-              connection.query(`UPDATE s_core_shops SET template_id = ${id}, document_template_id = ${id} WHERE ${'`default`'} = 1`, err => {
+              const result = results[0];
+
+              connection.query(`UPDATE s_core_shops SET template_id = ${result.id}, document_template_id = ${result.id} WHERE ${'`default`'} = 1`, err => {
                 if (err) {
                   console.log(err);
                   return reject(err);
