@@ -2,7 +2,6 @@
 var path = require('path');
 var assert = require('yeoman-assert');
 var helpers = require('yeoman-test');
-var fs = require('fs');
 
 describe('generator-shopware:theme', () => {
   beforeAll(() => {
@@ -16,10 +15,6 @@ describe('generator-shopware:theme', () => {
   });
 
   it('creates files', () => {
-    console.log(process.cwd());
-
-    const files = fs.readdirSync(process.cwd());
-    console.log(files);
     assert.file([
       '.babelrc',
       '.browserslistrc',
