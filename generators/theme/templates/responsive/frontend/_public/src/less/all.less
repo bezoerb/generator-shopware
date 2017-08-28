@@ -1,29 +1,26 @@
 /* ==========================================================================
-   INUITCSS
+   Theme: <%= themename %>
    ========================================================================== */
+
 /**
- * inuitcss, by @csswizardry
- *
- * github.com/inuitcss | inuitcss.com
- */
-/**
- * This is an example inuitcss manifest file. DO NOT MODIFY THIS FILE DIRECTLY.
- * Instead, copy and paste it into your own CSS directory and make additions,
- * extensions, and modifications there.
+ * This project is heavily inspired by Harry "CSS Wizardry" Roberts' inuitcss.
+ * Files should be organized in groups from:
+ *  - Generic to explicit
+ *  - Far-reaching to localised
+ *  - Low specificity to high specificity
  */
 /**
  * CONTENTS
  *
  * SETTINGS
- * Config...............Project-level configuration and feature switches.
- * Core.................inuitcss’ core and setup settings.
+ * Core.................Core and setup settings.
  * Global...............Project-wide variables and settings.
+                        (Values can be changed with the backend theme manager)
  *
  * TOOLS
  * Font-size............A mixin which guarantees baseline-friendly line-heights.
- * Clearfix.............Micro clearfix mixin.
  * Hidden...............Mixin for hiding elements.
- * Sass MQ..............inuitcss’ default media query manager.
+ * Object-fit...........Polyfill object-fit.
  *
  * GENERIC
  * Box-sizing...........Better default `box-sizing`.
@@ -56,8 +53,7 @@
  * Pack.................Pack items into available horizontal space.
  *
  * COMPONENTS
- * Buttons..............An example button component, and how it fits into the
- *                      inuitcss framework.
+ *
  *
  * UTILITIES
  * Clearfix.............Bind our clearfix onto a utility class.
@@ -74,7 +70,6 @@
 // SETTINGS
 @import "settings/core";
 @import "settings/global";
-@import "settings/dynamic";
 
 // TOOLS
 @import "tools/hidden";
@@ -82,8 +77,10 @@
 
 // GENERIC
 @import "generic/box-sizing";
-@import "generic/normalize";
-@import "generic/reset";
+// Normalize is already done in the Responsive Theme
+// Uncomment if you need to normalize again
+//@import "generic/normalize";
+//@import "generic/reset";
 @import "generic/shared";
 
 // ELEMENTS
@@ -95,18 +92,18 @@
 // OBJECTS
 //
 // Uncomment and add to this section as necessary.
-@import "objects/wrapper";
-@import "objects/layout";
-@import "objects/media";
-@import "objects/flag";
-@import "objects/list-bare";
-@import "objects/list-inline";
-@import "objects/box";
-@import "objects/block";
-@import "objects/ratio";
-@import "objects/crop";
-@import "objects/table";
-@import "objects/pack";
+//@import "objects/wrapper";
+//@import "objects/layout";
+//@import "objects/media";
+//@import "objects/flag";
+//@import "objects/list-bare";
+//@import "objects/list-inline";
+//@import "objects/box";
+//@import "objects/block";
+//@import "objects/ratio";
+//@import "objects/crop";
+//@import "objects/table";
+//@import "objects/pack";
 
 // COMPONENTS
 
