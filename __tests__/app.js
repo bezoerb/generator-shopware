@@ -5,13 +5,19 @@ var helpers = require('yeoman-test');
 
 describe('generator-shopware:app', () => {
   beforeAll(() => {
-    return helpers.run(path.join(__dirname, '../generators/app'))
-      .withPrompts({someAnswer: true});
+    return helpers.run(path.join(__dirname, '../generators/theme'))
+      .withPrompts({
+        url: 'localhost',
+        dbname: 'shopware_test',
+        dbuser: 'root',
+        dbpass: '',
+        dbhost: '127.0.0.1'
+      });
   });
 
-  it('creates files', () => {
+  it.skip('creates files', () => {
     assert.file([
-      'dummyfile.txt'
+      'src/config.php'
     ]);
   });
 });
