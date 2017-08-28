@@ -1,7 +1,7 @@
 'use strict';
-var path = require('path');
-var assert = require('yeoman-assert');
-var helpers = require('yeoman-test');
+const path = require('path');
+const assert = require('yeoman-assert');
+const helpers = require('yeoman-test');
 
 describe('generator-shopware:app', () => {
   beforeAll(() => {
@@ -15,7 +15,7 @@ describe('generator-shopware:app', () => {
       });
   });
 
-  it.skip('creates files', () => {
+  it('creates files', () => {
     assert.file([
       'src/config.php'
     ]);

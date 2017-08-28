@@ -23,6 +23,9 @@
     "theme",
     "yeoman-generator"
   ],
+  "engines": {
+    "node": ">=4"
+  },
   "devDependencies": {
     "coveralls": "^2.13.1",
     "eslint": "^4.1.0",
