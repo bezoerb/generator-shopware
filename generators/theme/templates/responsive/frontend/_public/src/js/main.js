@@ -12,6 +12,9 @@ require('svg4everybody')();
 // This adds support for object-fit and object-position to IEdge 9-13, Android < 5,
 // Safari < 10 and skips browsers that already support them.
 require('object-fit-images')();
-const debug = require('debug')('<%= themename %>:core');
 
+// initialize service worker
+require('./sw');
+
+const debug = require('debug')('<%= themename %>:core');
 debug('Theme "<%= themename %>" is initialized');
