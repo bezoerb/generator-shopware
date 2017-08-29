@@ -24,13 +24,13 @@
     "yeoman-generator"
   ],
   "engines": {
-    "node": ">=4"
+    "node": ">=6"
   },
   "devDependencies": {
     "coveralls": "^2.13.1",
     "eslint": "^4.1.0",
     "eslint-config-xo-space": "^0.16.0",
-    "jest": "^19.0.2",
+    "jest": "^20.0.4",
     "jest-cli": "^20.0.0",
     "nsp": "^2.6.3",
     "yeoman-assert": "^3.0.0",
@@ -45,6 +45,7 @@
     "inquirer": "^3.2.2",
     "lodash": "^4.17.4",
     "mysql": "^2.14.1",
+    "shopware-cli": "^0.1.1",
     "yeoman-generator": "^1.0.0",
     "yosay": "^2.0.0"
   },
