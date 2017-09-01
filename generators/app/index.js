@@ -13,7 +13,7 @@ module.exports = class extends Generator {
     ));
 
     return globby(['*/shopware.php', '.shopware-cli.json'], {cwd: this.env.cwd})
-      .then(files => ui.questions({initial: files.length === 0}).then(props => {
+      .then(files => this.prompt(ui.prompts({initial: files.length === 0})).then(props => {
         this.props = props;
         this.config.set(props);
       }));

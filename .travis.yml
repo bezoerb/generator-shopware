@@ -6,6 +6,7 @@ language: node_js
 node_js:
   - "6"
   - "7"
+  - "8"
 
 addons:
   apt:
@@ -22,9 +23,6 @@ before_install:
   - mysql -e 'CREATE DATABASE shopware_test;'
   - php --version
   - if [[ $TRAVIS_SECURE_ENV_VARS = "true" ]]; then php -r "readfile('https://getcomposer.org/installer');" | php && php composer.phar config -g github-oauth.github.com $GH_AUTH; fi
-  - npm update -g npm
-  - npm install -g gulp
-  - currentfolder=${PWD##*/}
   - if [ "$currentfolder" != 'generator-shopware' ]; then cd .. && eval "mv $currentfolder generator-shopware" && cd generator-shopware; fi
 
 before_script:
