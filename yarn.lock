@@ -1640,9 +1640,28 @@ inquirer@^1.0.2:
     strip-ansi "^3.0.0"
     through "^2.3.6"
 
-inquirer@^3.0.1, inquirer@^3.0.6, inquirer@^3.1.0, inquirer@^3.2.2:
+inquirer@^3.0.1, inquirer@^3.0.6, inquirer@^3.1.0:
   version "3.2.2"
   resolved "https://registry.yarnpkg.com/inquirer/-/inquirer-3.2.2.tgz#c2aaede1507cc54d826818737742d621bef2e823"
+  dependencies:
+    ansi-escapes "^2.0.0"
+    chalk "^2.0.0"
+    cli-cursor "^2.1.0"
+    cli-width "^2.0.0"
+    external-editor "^2.0.4"
+    figures "^2.0.0"
+    lodash "^4.3.0"
+    mute-stream "0.0.7"
+    run-async "^2.2.0"
+    rx-lite "^4.0.8"
+    rx-lite-aggregates "^4.0.8"
+    string-width "^2.1.0"
+    strip-ansi "^4.0.0"
+    through "^2.3.6"
+
+inquirer@^3.2.3:
+  version "3.2.3"
+  resolved "https://registry.yarnpkg.com/inquirer/-/inquirer-3.2.3.tgz#1c7b1731cf77b934ec47d22c9ac5aa8fe7fbe095"
   dependencies:
     ansi-escapes "^2.0.0"
     chalk "^2.0.0"
@@ -2409,6 +2428,12 @@ log-symbols@^1.0.1, log-symbols@^1.0.2:
   dependencies:
     chalk "^1.0.0"
 
+log-symbols@^2.0.0:
+  version "2.0.0"
+  resolved "https://registry.yarnpkg.com/log-symbols/-/log-symbols-2.0.0.tgz#595e63be4d5c8cbf294a9e09e0d5629f5913fc0c"
+  dependencies:
+    chalk "^2.0.1"
+
 log-update@^1.0.2:
   version "1.0.2"
   resolved "https://registry.yarnpkg.com/log-update/-/log-update-1.0.2.tgz#19929f64c4093d2d2e7075a1dad8af59c296b8d1"
@@ -2571,6 +2596,10 @@ mkdirp@^0.5.0, mkdirp@^0.5.1:
   resolved "https://registry.yarnpkg.com/mkdirp/-/mkdirp-0.5.1.tgz#30057438eac6cf7f8c4767f38648d6697d75c903"
   dependencies:
     minimist "0.0.8"
+
+mockery@^2.1.0:
+  version "2.1.0"
+  resolved "https://registry.yarnpkg.com/mockery/-/mockery-2.1.0.tgz#5b0aef1ff564f0f8139445e165536c7909713470"
 
 moment@2.x.x, moment@^2.18.1:
   version "2.18.1"
@@ -3312,9 +3341,9 @@ shellwords@^0.1.0:
   version "0.1.1"
   resolved "https://registry.yarnpkg.com/shellwords/-/shellwords-0.1.1.tgz#d6b9181c1a48d397324c84871efbcfc73fc0654b"
 
-shopware-cli@^0.1.1:
-  version "0.1.1"
-  resolved "https://registry.yarnpkg.com/shopware-cli/-/shopware-cli-0.1.1.tgz#6f2acf5a7364346ed9fadfc026dd130ceda37ced"
+shopware-cli@^0.1.3:
+  version "0.1.3"
+  resolved "https://registry.yarnpkg.com/shopware-cli/-/shopware-cli-0.1.3.tgz#c53b60372ef258c23da37034c3809ad1676e7e47"
   dependencies:
     any-observable "^0.2.0"
     chalk "^2.0.1"
@@ -3327,6 +3356,7 @@ shopware-cli@^0.1.1:
     has-yarn "^1.0.0"
     inquirer "^3.1.0"
     listr "^0.12.0"
+    log-symbols "^2.0.0"
     make-dir "^1.0.0"
     meow "^3.7.0"
     mimic-fn "^1.1.0"
