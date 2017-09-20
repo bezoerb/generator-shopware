@@ -5,7 +5,8 @@ const chalk = require('chalk');
 const yosay = require('yosay');
 const inquirer = require('inquirer');
 const globby = require('globby');
-const capitalize = require('lodash/capitalize');
+const upperFirst = require('lodash/upperFirst');
+const camelCase = require('lodash/camelCase');
 const kebabCase = require('lodash/kebabCase');
 const findUp = require('find-up');
 const fs = require('fs-extra');
@@ -63,14 +64,14 @@ module.exports = class extends Generator {
       // To access props later use this.props.someAnswer;
       this.props = Object.assign({}, this.props, props, {
         themename: kebabCase(props.name),
-        capitalizedThemename: capitalize(props.name)
+        capitalizedThemename: upperFirst(camelCase(props.name))
       });
     });
   }
 
   writing() {
     const base = this.props.rootpath ? path.join(this.props.rootpath, 'themes/Frontend') : this.env.cwd;
-    const destBase = (kebabCase(this.appname) === this.props.themename) ? '' : path.join(base, this.props.themename);
+    const destBase = (this.appname === this.props.capitalizedThemename) ? '' : path.join(base, this.props.capitalizedThemename);
     const tempateBase = this.props.parent.toLowerCase();
     const globOptions = {cwd: this.templatePath(tempateBase), dot: true, nodir: true};
 
