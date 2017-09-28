@@ -21,9 +21,42 @@ module.exports = class extends Generator {
     ));
 
     this.props = this.config.getAll() || {};
+
     const rootpath = findUp.sync('.yo-rc.json', {cwd: this.env.cwd});
     if (rootpath) {
       this.props.rootpath = path.dirname(rootpath);
+
+      // Validate props if config.php is present
+      const config = path.join(this.props.rootpath, 'shopware', 'config.php');
+      if (fs.existsSync(config)) {
+        const swagConfig = fs.readFileSync(config, 'utf8');
+        Object.keys(this.props).forEach(key => {
+          let regexp;
+          switch (key) {
+            case 'dbuser':
+              regexp = new RegExp(`['"]username['"]\\s+=>\\s+['"]([^'"]+)['"]`);
+              break;
+            case 'dbpass':
+              regexp = new RegExp(`['"]password['"]\\s+=>\\s+['"]([^'"]+)['"]`);
+              break;
+            case 'dbhost':
+              regexp = new RegExp(`['"]host['"]\\s+=>\\s+['"]([^'"]+)['"]`);
+              break;
+            case 'dbport':
+              regexp = new RegExp(`['"]port['"]\\s+=>\\s+['"]([^'"]+)['"]`);
+              break;
+            case 'dbname':
+              regexp = new RegExp(`['"]dbname['"]\\s+=>\\s+['"]([^'"]+)['"]`);
+              break;
+            default: break;
+          }
+
+          const match = regexp && regexp.exec(swagConfig);
+          if (match && match[1] !== this.props[key]) {
+            this.props[key] = match[1];
+          }
+        });
+      }
     }
 
     const prompts = [
@@ -107,14 +140,14 @@ module.exports = class extends Generator {
 
     // Symlink theme if we're not standalone
     if (this.props.rootpath) {
-      const src = path.join(this.props.rootpath, 'themes/Frontend/', this.props.themename);
-      const dest = path.join(this.props.rootpath, 'src/themes/Frontend/', this.props.themename);
+      const src = path.join(this.props.rootpath, 'themes/Frontend/', this.props.capitalizedThemename);
+      const dest = path.join(this.props.rootpath, 'shopware/themes/Frontend/', this.props.capitalizedThemename);
       promises.push(fs.ensureSymlink(path.relative(path.dirname(dest), src), dest));
     }
 
     if (this.props.activate && this.props.rootpath) {
       // Synchronice theme
-      promises.push(execa('php', [path.join(this.props.rootpath, 'src/bin/console'), 'sw:theme:synchronize']));
+      promises.push(execa('php', [path.join(this.props.rootpath, 'shopware/bin/console'), 'sw:theme:synchronize']));
 
       promises.push(new Promise((resolve, reject) => {
         const connection = mysql.createConnection({
