@@ -46,14 +46,14 @@ function smarty_function_icon($params, $smarty)
   }
   $opts['className'] = implode(' ', $classNames);
 
-  if (!empty($opts['title')) {
+  if (!empty($opts['title'])) {
     $markup = '<svg role="img" class="' . $opts['className'] . '" aria-labelledby="' . $id . '">' . PHP_EOL .
               '    <title id="' . $id . '">' . $opts['title'] . '</title>' . PHP_EOL .
-              '    <use xlink:href="/themes/Frontend/<%= themename %>/frontend/_resources/img/icons.svg#' . $params['id'] . '"/>' . PHP_EOL .
+              '    <use xlink:href="/themes/Frontend/<%= capitalizedThemename %>/frontend/_resources/img/icons.svg#' . $params['id'] . '"/>' . PHP_EOL .
               '</svg>';
   } else {
     $markup = '<svg role="img" class="' . $opts['className'] . '" aria-hidden="true">' . PHP_EOL .
-              '    <use xlink:href="/themes/Frontend/<%= themename %>/frontend/_resources/img/icons.svg#' . $params['id'] . '"/>' . PHP_EOL .
+              '    <use xlink:href="/themes/Frontend/<%= capitalizedThemename %>/frontend/_resources/img/icons.svg#' . $params['id'] . '"/>' . PHP_EOL .
               '</svg>';
   }
 

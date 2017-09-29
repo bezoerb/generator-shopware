@@ -54,6 +54,8 @@ module.exports = class extends Generator {
           const match = regexp && regexp.exec(swagConfig);
           if (match && match[1] !== this.props[key]) {
             this.props[key] = match[1];
+
+            this.config.save();
           }
         });
       }

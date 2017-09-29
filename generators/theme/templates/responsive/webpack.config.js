@@ -137,7 +137,7 @@ const config = {
 if (ENV === 'prod') {
   config.module.rules.push({
     test: /.js?$/,
-    exclude: /(node_modules)|(Frontend\/Bare)|(Frontend\/Responsive)/,
+    exclude: /(node_modules)|(Frontend\/Bare)|(Frontend\/Responsive)|(\/plugins\/)/,
     use: ['babel-loader?presets[]=env,cacheDirectory=true']
   });
 
@@ -155,7 +155,7 @@ if (ENV === 'prod') {
 
   config.module.rules.push({
     test: /.js?$/,
-    exclude: /(node_modules)|(Frontend\/Bare)|(Frontend\/Responsive)/,
+    exclude: /(node_modules)|(Frontend\/Bare)|(Frontend\/Responsive)|(\/plugins\/)/,
     use: [
       'babel-loader?presets[]=env,cacheDirectory=true'
     ]
