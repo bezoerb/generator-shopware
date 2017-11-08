@@ -1,0 +1,15 @@
+///* ========================================================================
+//   #FONT-SIZE
+//   ======================================================================== */
+
+// Generate a font-size and baseline-compatible line-height.
+.font-size(@font-size, @line-height: auto) when (@line-height = auto) {
+  .unitize(font-size, @font-size);
+  .unitize(line-height, ceil(@font-size / @global-line-height) * (@global-line-height / @font-size));
+}
+
+// Generate a font-size and baseline-compatible line-height.
+.font-size(@font-size, @line-height: auto) when not (@line-height = auto) {
+  .unitize(font-size, @font-size);
+  .unitize(line-height, @line-height);
+}

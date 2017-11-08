@@ -1,0 +1,44 @@
+/* ==========================================================================
+   #BOX
+   ========================================================================== */
+
+/**
+ * The box object simply boxes off content. Extend with cosmetic styles in the
+ * Components layer.
+ *
+ * 1. So we can apply the `.o-box` class to naturally-inline elements.
+ */
+
+.o-box {
+  .clearfix();
+  display: block; /* [1] */
+  .unitize(padding, @global-spacing-unit);
+
+  > :last-child {
+    margin-bottom: 0;
+  }
+
+}
+
+/* Size variants.
+   ========================================================================== */
+
+.o-box--flush {
+  padding: 0;
+}
+
+.o-box--tiny {
+  .unitize(padding, @global-spacing-unit-tiny);
+}
+
+.o-box--small {
+  .unitize(padding, @global-spacing-unit-small);
+}
+
+.o-box--large {
+  .unitize(padding, @global-spacing-unit-large);
+}
+
+.o-box--huge {
+  .unitize(padding, @global-spacing-unit-huge);
+}

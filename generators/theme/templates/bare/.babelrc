@@ -1,0 +1,12 @@
+{
+  "presets": [
+    ["env", {
+      "targets": {
+        "node": "current"
+      },
+      "modules": false
+    }]
+  ],
+  "plugins": ["transform-object-rest-spread"],
+  "retainLines": true
+}

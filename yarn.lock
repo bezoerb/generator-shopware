@@ -3341,9 +3341,9 @@ shellwords@^0.1.0:
   version "0.1.1"
   resolved "https://registry.yarnpkg.com/shellwords/-/shellwords-0.1.1.tgz#d6b9181c1a48d397324c84871efbcfc73fc0654b"
 
-shopware-cli@^0.1.3:
-  version "0.1.3"
-  resolved "https://registry.yarnpkg.com/shopware-cli/-/shopware-cli-0.1.3.tgz#c53b60372ef258c23da37034c3809ad1676e7e47"
+shopware-cli@^0.1.7:
+  version "0.1.7"
+  resolved "https://registry.yarnpkg.com/shopware-cli/-/shopware-cli-0.1.7.tgz#340dc9c3efc86cc6235abf7ca0550603b9d2fc8d"
   dependencies:
     any-observable "^0.2.0"
     chalk "^2.0.1"
@@ -3352,6 +3352,7 @@ shopware-cli@^0.1.3:
     cross-spawn "^5.1.0"
     execa "^0.7.0"
     find-up "^2.1.0"
+    fs-extra "^4.0.1"
     globby "^6.1.0"
     has-yarn "^1.0.0"
     inquirer "^3.1.0"

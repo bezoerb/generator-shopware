@@ -1,0 +1,115 @@
+/* ==========================================================================
+   #SPACING
+   ========================================================================== */
+
+/**
+ * Utility classes to put specific spacing values onto elements. The below loop
+ * will generate us a suite of classes like:
+ *
+ *   .u-pt {}
+ *   .u-pl\+\+ {}
+ *   .u-mr-- {}
+ *   .u-p {}
+ *   .u-pr0 {}
+ */
+
+/* stylelint-disable string-quotes */
+// padding
+.u-p\+\+ { .unitize(padding, @global-spacing-unit-huge); }
+.u-p\+   { .unitize(padding, @global-spacing-unit-large); }
+.u-p     { .unitize(padding, @global-spacing-unit); }
+.u-p-    { .unitize(padding, @global-spacing-unit-small); }
+.u-p--   { .unitize(padding, @global-spacing-unit-tiny); }
+.u-p0    { .unitize(padding, 0); }
+
+.u-pt\+\+ { .unitize(padding-top, @global-spacing-unit-huge); }
+.u-pt\+   { .unitize(padding-top, @global-spacing-unit-large); }
+.u-pt     { .unitize(padding-top, @global-spacing-unit); }
+.u-pt-    { .unitize(padding-top, @global-spacing-unit-small); }
+.u-pt--   { .unitize(padding-top, @global-spacing-unit-tiny); }
+.u-pt0    { .unitize(padding-top, 0); }
+
+.u-pr\+\+ { .unitize(padding-right, @global-spacing-unit-huge); }
+.u-pr\+   { .unitize(padding-right, @global-spacing-unit-large); }
+.u-pr     { .unitize(padding-right, @global-spacing-unit); }
+.u-pr-    { .unitize(padding-right, @global-spacing-unit-small); }
+.u-pr--   { .unitize(padding-right, @global-spacing-unit-tiny); }
+.u-pr0    { .unitize(padding-right, 0); }
+
+.u-pb\+\+ { .unitize(padding-bottom, @global-spacing-unit-huge); }
+.u-pb\+   { .unitize(padding-bottom, @global-spacing-unit-large); }
+.u-pb     { .unitize(padding-bottom, @global-spacing-unit); }
+.u-pb-    { .unitize(padding-bottom, @global-spacing-unit-small); }
+.u-pb--   { .unitize(padding-bottom, @global-spacing-unit-tiny); }
+.u-pb0    { .unitize(padding-bottom, 0); }
+
+.u-pl\+\+ { .unitize(padding-left, @global-spacing-unit-huge); }
+.u-pl\+   { .unitize(padding-left, @global-spacing-unit-large); }
+.u-pl     { .unitize(padding-left, @global-spacing-unit); }
+.u-pl-    { .unitize(padding-left, @global-spacing-unit-small); }
+.u-pl--   { .unitize(padding-left, @global-spacing-unit-tiny); }
+.u-pl0    { .unitize(padding-left, 0); }
+
+// margins
+.u-m\+\+ { .unitize(margin, @global-spacing-unit-huge); }
+.u-m\+   { .unitize(margin, @global-spacing-unit-large); }
+.u-m     { .unitize(margin, @global-spacing-unit); }
+.u-m-    { .unitize(margin, @global-spacing-unit-small); }
+.u-m--   { .unitize(margin, @global-spacing-unit-tiny); }
+.u-m0    { .unitize(margin, 0); }
+
+.u-mt\+\+\+ { .unitize(margin-bottom, 100); }
+.u-mt\+\+ { .unitize(margin-top, @global-spacing-unit-huge); }
+.u-mt\+   { .unitize(margin-top, @global-spacing-unit-large); }
+.u-mt     { .unitize(margin-top, @global-spacing-unit); }
+.u-mt-    { .unitize(margin-top, @global-spacing-unit-small); }
+.u-mt--   { .unitize(margin-top, @global-spacing-unit-tiny); }
+.u-mt0    { .unitize(margin-top, 0); }
+
+.u-mr\+\+ { .unitize(margin-right, @global-spacing-unit-huge); }
+.u-mr\+   { .unitize(margin-right, @global-spacing-unit-large); }
+.u-mr     { .unitize(margin-right, @global-spacing-unit); }
+.u-mr-    { .unitize(margin-right, @global-spacing-unit-small); }
+.u-mr--   { .unitize(margin-right, @global-spacing-unit-tiny); }
+.u-mr0    { .unitize(margin-right, 0); }
+
+.u-mb\+\+\+ { .unitize(margin-bottom, 100); }
+.u-mb\+\+ { .unitize(margin-bottom, @global-spacing-unit-huge); }
+.u-mb\+   { .unitize(margin-bottom, @global-spacing-unit-large); }
+.u-mb     { .unitize(margin-bottom, @global-spacing-unit); }
+.u-mb-    { .unitize(margin-bottom, @global-spacing-unit-small); }
+.u-mb--   { .unitize(margin-bottom, @global-spacing-unit-tiny); }
+.u-mb0    { .unitize(margin-bottom, 0); }
+
+.u-ml\+\+ { .unitize(margin-left, @global-spacing-unit-huge); }
+.u-ml\+   { .unitize(margin-left, @global-spacing-unit-large); }
+.u-ml     { .unitize(margin-left, @global-spacing-unit); }
+.u-ml-    { .unitize(margin-left, @global-spacing-unit-small); }
+.u-ml--   { .unitize(margin-left, @global-spacing-unit-tiny); }
+
+// inverse margin to collapse parent padding
+.u-mt-inverse\+\+ { .unitize(margin-top, -@global-spacing-unit-huge); }
+.u-mt-inverse\+   { .unitize(margin-top, -@global-spacing-unit-large); }
+.u-mt-inverse     { .unitize(margin-top, -@global-spacing-unit); }
+.u-mt-inverse-    { .unitize(margin-top, -@global-spacing-unit-small); }
+.u-mt-inverse--   { .unitize(margin-top, -@global-spacing-unit-tiny); }
+
+.u-mr-inverse\+\+ { .unitize(margin-right, -@global-spacing-unit-huge); }
+.u-mr-inverse\+   { .unitize(margin-right, -@global-spacing-unit-large); }
+.u-mr-inverse     { .unitize(margin-right, -@global-spacing-unit); }
+.u-mr-inverse-    { .unitize(margin-right, -@global-spacing-unit-small); }
+.u-mr-inverse--   { .unitize(margin-right, -@global-spacing-unit-tiny); }
+
+.u-mb-inverse\+\+ { .unitize(margin-bottom, -@global-spacing-unit-huge); }
+.u-mb-inverse\+   { .unitize(margin-bottom, -@global-spacing-unit-large); }
+.u-mb-inverse     { .unitize(margin-bottom, -@global-spacing-unit); }
+.u-mb-inverse-    { .unitize(margin-bottom, -@global-spacing-unit-small); }
+.u-mb-inverse--   { .unitize(margin-bottom, -@global-spacing-unit-tiny); }
+
+.u-ml-inverse\+\+ { .unitize(margin-left, -@global-spacing-unit-huge); }
+.u-ml-inverse\+   { .unitize(margin-left, -@global-spacing-unit-large); }
+.u-ml-inverse     { .unitize(margin-left, -@global-spacing-unit); }
+.u-ml-inverse-    { .unitize(margin-left, -@global-spacing-unit-small); }
+.u-ml-inverse--   { .unitize(margin-left, -@global-spacing-unit-tiny); }
+
+/* stylelint-enable string-quotes */
