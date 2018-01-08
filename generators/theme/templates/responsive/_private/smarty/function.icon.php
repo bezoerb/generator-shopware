@@ -22,8 +22,6 @@
  * our trademarks remain entirely with us.
  */
 
-use Shopware\Themes\<%= capitalizedThemename %>\Theme;
-
 /**
  * @param $params
  * @param $smarty
