@@ -6,16 +6,19 @@
 // https://babeljs.io/docs/learn-es2015/
 const gulp = require('gulp');
 const del = require('del');
+const watch = require('gulp-watch');
+const batch = require('gulp-batch');
 const runSequence = require('run-sequence');
-const {ENV, getenv} = require('./tasks/helper/env');
+const {isProd, getOption} = require('./tasks/helper/env');
 const {dir, swSetHost} = require('./tasks/helper/utils');
 
 // Require the tasks
 const {serve, bs} = require('./tasks/server');
+const {rev, revManifest} = require('./tasks/rev');
 const {prepareStyles, styles} = require('./tasks/styles');
 const {scripts} = require('./tasks/scripts');
 const {svgstore, imagemin} = require('./tasks/images');
-const {lint} = require('./tasks/tests');
+const {lint, karma} = require('./tasks/tests');
 const {swDumpConfig, swCompileTheme, swCacheClear} = require('./tasks/exec');
 const {copySwScripts, generateServiceWorker} = require('./tasks/service-worker');
 const {ngrokUrl, psiMobile, psiDesktop} = require('./tasks/psi');
@@ -50,8 +53,12 @@ gulp.task('styles:watch', styles(bs.reload, true));
 // Process scripts with webpack based on environment
 // node environment (used in browsersync server) enables HMR (Hot Module Replacement)
 gulp.task('scripts', ['sw:config'], scripts());
-// Same as above with enforced 'prod' environment for build task
-gulp.task('scripts:prod', ['sw:config'], scripts('prod'));
+
+// Hash asset filenames and create app/config/rev-manifest.json
+// The manifest file is used by zoerb/filerevbundle to append hashes
+// in TWIG using the {{ asset(...) }} function
+gulp.task('rev:files', rev);
+gulp.task('rev', ['rev:files'], revManifest);
 
 // Open a secure tunnel to localhost to let pagespeed insights analyse the page
 gulp.task('ngrok:url', ngrokUrl);
@@ -61,7 +68,7 @@ gulp.task('psi:desktop', psiDesktop);
 gulp.task('psi:mobile', psiMobile);
 // Force exit and reset host
 gulp.task('psi:exit', () => {
-  swSetHost.sync(getenv('host'));
+  swSetHost.sync(getOption('host'));
   process.exit();
 });
 gulp.task('psi', ['assets'], cb => {
@@ -69,13 +76,15 @@ gulp.task('psi', ['assets'], cb => {
 });
 
 // Lint js files using eslint
-gulp.task('test', lint);
+gulp.task('lint', lint);
+gulp.task('karma', karma);
+gulp.task('test', cb => runSequence(['lint', 'karma'], cb));
 
 // Automatically create svg sprite from svg icons in frontend/public/src/img/icons/**/*.svg
 gulp.task('svgstore', svgstore);
 // Optimize images
 gulp.task('imagemin', imagemin);
-gulp.task('images', cb => runSequence(['svgstore', 'imagemin'], cb));
+gulp.task('images', cb => runSequence(isProd() ? ['svgstore', 'imagemin'] : ['svgstore'], cb));
 gulp.task('images:watch', ['images'], done => {
   bs.reload();
   done();
@@ -83,32 +92,44 @@ gulp.task('images:watch', ['images'], done => {
 
 // Clean output directory
 gulp.task('clean', () =>
-  del(['.tmp', dir('web', 'cache/*.{css,less,js,json,map}')], {dot: true, force: true})
-);
+  del(['.tmp', dir('web', 'cache/*.{css,less,js,map}')], {dot: true, force: true}));
 
 // Prepare assets for browsersync serve
 gulp.task('serve:prepare', ['clean'], cb => {
-  if (ENV === 'prod') {
+  if (isProd()) {
     runSequence(['clean', 'test', 'assets'], cb);
   } else {
     runSequence(['clean', 'scripts', 'styles', 'images'], cb);
   }
 });
-// Run dev server
+
+// Run dev server and watch files
 gulp.task('serve', ['serve:prepare'], serve(done => {
-  gulp.watch(dir('src', '**/*.{jpg,jpeg,gif,png,webp,svg}'), ['images:watch']);
-  gulp.watch(dir('template', '{documents,frontend,newsletter,widgets}/**/*.tpl')).on('change', bs.reload);
-  gulp.watch(dir('src', '**/*.less'), ['styles:watch']);
+  // Use polling in docker environment
+  const watchOpts = {
+    usePolling: getOption('docker'),
+    interval: 500,
+    alwaysStat: true,
+  };
+
+  watch(dir('src', '**/*.{jpg,jpeg,gif,png,webp,svg}'), watchOpts, batch((e, done) => {
+    gulp.start('images:watch', done);
+  }));
+  watch(dir('template', '{documents,frontend,newsletter,widgets}/**/*.tpl'), watchOpts).on('change', bs.reload);
+  watch(dir('src', '**/*.less'), watchOpts, batch((e, done) => {
+    gulp.start('styles:watch', done);
+  }));
   done();
 }));
 
 // Optimize assets for prod environment
-gulp.task('assets', ['sw:config', 'images', 'scripts:prod'], cb =>
-  runSequence('sw:compile', 'generate-service-worker', cb)
-);
+gulp.task('assets', ['sw:config', 'images', 'scripts'], cb =>
+  runSequence('rev', 'sw:compile', 'generate-service-worker', cb));
 
 // Build task. Run tests and optimize assets
-gulp.task('build', ['clean'], cb => runSequence(['test', 'assets'], cb));
+gulp.task('build', ['clean'], cb => {
+  runSequence(['assets'], 'test', cb);
+});
 
 // Default task: serve
 gulp.task('default', ['serve']);

@@ -22,6 +22,8 @@
  * our trademarks remain entirely with us.
  */
 
+use Shopware\Themes\<%= capitalizedThemename %>\Theme;
+
 /**
  * @param $params
  * @param $smarty
@@ -30,36 +32,33 @@
  */
 function smarty_function_icon($params, $smarty)
 {
-  if (empty($params['id'])) {
-    return false;
-  }
+    if (empty($params['id'])) {
+        return false;
+    }
+    $id = uniqid('svg_');
+    $opts = array_merge([
+            'title' => '',
+    ], $params);
 
-  $id = uniqid('svg_');
-  $opts = array_merge([
-  ], $params);
+    $smarty->smarty->loadPlugin('smarty_function_asset');
+    $sprite = smarty_function_asset(['file' => 'img/icons.svg'], $smarty);
 
-  $classNames = ['icon', 'icon--' . strtolower($params['id'])];
-  if (!empty($params['className'])) {
-    $classNames = array_merge($classNames, explode(' ', $params['className']));
-    $classNames = array_filter($classNames);
-    $classNames = array_unique($classNames);
-  }
-  $opts['className'] = implode(' ', $classNames);
+    $classNames = ['icon', 'icon--' . strtolower($params['id'])];
+    if (!empty($params['className'])) {
+        $classNames = array_merge($classNames, explode(' ', $params['className']));
+        $classNames = array_filter($classNames);
+        $classNames = array_unique($classNames);
+    }
+    $opts['className'] = implode(' ', $classNames);
 
-  if (!empty($opts['title')) {
-    $markup = '<svg role="img" class="' . $opts['className'] . '" aria-labelledby="' . $id . '">' . PHP_EOL .
+    $markup = '<svg role="img" class="' . $opts['className'] . '" aria-labelledby="' . $id . '" >' . PHP_EOL .
               '    <title id="' . $id . '">' . $opts['title'] . '</title>' . PHP_EOL .
-              '    <use xlink:href="/themes/Frontend/bare-theme/frontend/_resources/img/icons.svg#' . $params['id'] . '"/>' . PHP_EOL .
+              '    <use xlink:href="'.$sprite.'#' . $params['id'] . '"/>' . PHP_EOL .
               '</svg>';
-  } else {
-    $markup = '<svg role="img" class="' . $opts['className'] . '" aria-hidden="true">' . PHP_EOL .
-              '    <use xlink:href="/themes/Frontend/bare-theme/frontend/_resources/img/icons.svg#' . $params['id'] . '"/>' . PHP_EOL .
-              '</svg>';
-  }
 
-  if (!empty($params['assign'])) {
-    $smarty->assign($params['assign'], $markup);
-  } else {
-    return $markup;
-  }
+    if (!empty($params['assign'])) {
+        $smarty->assign($params['assign'], $markup);
+    } else {
+        return $markup;
+    }
 }

@@ -1,5 +1,5 @@
 {
-  "name": "bilderde-shopware-theme",
+  "name": "<%= themename %>-shopware-theme",
   "version": "0.1.0",
   "description": "Just another fabulous shopware theme",
   "main": "index.js",

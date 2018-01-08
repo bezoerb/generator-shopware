@@ -30,21 +30,21 @@ const generateServiceWorker = () => {
     // Sw-toolbox.js needs to be listed first. It sets up methods used in runtime-caching.js.
     importScripts: [
       path.relative(paths.root, dir('prod', 'js/sw/sw-toolbox.js')),
-      path.relative(paths.root, dir('prod', 'js/sw/runtime-caching.js'))
+      path.relative(paths.root, dir('prod', 'js/sw/runtime-caching.js')),
     ],
     staticFileGlobs: [
       // Add/remove glob patterns to match your directory setup.
       dir('prod', 'img/**/*'),
       dir('root', lessTarget),
       dir('root', jsTarget),
-      dir('prod', 'js/vendor.js')
+      dir('prod', 'js/vendor.js'),
     ],
     // Translates a static file path to the relative URL that it's served from.
-    stripPrefix: dir('root', path.sep)
+    stripPrefix: dir('root', path.sep),
   });
 };
 
 module.exports = {
   copySwScripts,
-  generateServiceWorker
+  generateServiceWorker,
 };

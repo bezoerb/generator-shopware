@@ -3,11 +3,11 @@ const ngrok = require('ngrok');
 const chalk = require('chalk');
 const {output: pageSpeed} = require('psi');
 const {paths, swSetHost, phpMiddleware} = require('./helper/utils');
-const {getenv} = require('./helper/env');
+const {getOption} = require('./helper/env');
 const browserSync = require('browser-sync');
 const getport = require('getport');
 
-let site = getenv('host');
+let site = getOption('host');
 
 /**
  * Open a secure tunnel to local browsersync server and store
@@ -19,12 +19,12 @@ let site = getenv('host');
  */
 const ngrokUrl = cb => {
   const bs = browserSync.create('ngrok');
-  const host = getenv('host') ? `http://${getenv('host')}` : undefined;
+  const host = getOption('host') ? `http://${getOption('host')}` : undefined;
   const options = {
     watchTask: true,
     notify: false,
     open: false,
-    ghostMode: false
+    ghostMode: false,
   };
 
   // Use browsersync as proxy to your local site if possible
@@ -52,7 +52,7 @@ const ngrokUrl = cb => {
 
         let promise;
         if (host) {
-          promise = swSetHost(getenv('host'));
+          promise = swSetHost(getOption('host'));
         } else {
           promise = swSetHost(site.replace(/^.*:\/\//, ''));
         }
@@ -70,7 +70,7 @@ const psiMobile = () =>
   pageSpeed(site, {
     strategy: 'mobile',
     nokey: 'true',
-    threshold: 1
+    threshold: 1,
   });
 
 /**
@@ -80,11 +80,11 @@ const psiDesktop = () =>
   pageSpeed(site, {
     strategy: 'desktop',
     nokey: 'true',
-    threshold: 1
+    threshold: 1,
   });
 
 module.exports = {
   ngrokUrl,
   psiMobile,
-  psiDesktop
+  psiDesktop,
 };

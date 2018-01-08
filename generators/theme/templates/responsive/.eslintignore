@@ -1,0 +1,6 @@
+# /node_modules/* and /bower_components/* ignored by default
+
+# Ignore built files except build/index.js
+frontend/_resources/*
+frontend/_public/src/js/vendor/*
+frontend/_public/src/js/legacy/*

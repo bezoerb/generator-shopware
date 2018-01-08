@@ -1,7 +1,7 @@
 /* eslint-env node, es6 */
-import webpack from 'webpack';
-import gutil from 'gulp-util';
-import {ENV} from './helper/env';
+const webpack = require('webpack');
+const gutil = require('gulp-util');
+const {isDev} = require('./helper/env');
 
 /**
  * Concatenate and minify JavaScript.
@@ -14,23 +14,24 @@ const scripts = () => cb => {
       colors: true,
       modules: true,
       reasons: true,
-      errorDetails: true
-    }
+      errorDetails: true,
+    },
   };
 
   webpack(config, (err, stats) => {
     if (err) {
       throw new gutil.PluginError('webpack:build', err);
     }
-    if (ENV !== 'prod') {
+    if (isDev()) {
       gutil.log('[webpack:build]', stats.toString({
-        colors: true
+        colors: true,
       }));
     }
+
     cb();
   });
 };
 
 module.exports = {
-  scripts
+  scripts,
 };

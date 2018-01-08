@@ -2,7 +2,7 @@
  * Service Worker initialisation
  */
 /* eslint-env worker */
-var debug = require('debug')('satisfyer:service-worker');
+var debug = require('debug')('<%= themename %>:service-worker');
 
 // Check to make sure service workers are supported in the current browser,
 // and that the current page is accessed from a secure origin. Using a

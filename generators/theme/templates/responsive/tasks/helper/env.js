@@ -10,20 +10,30 @@ if (existsSync(envFile)) {
 }
 
 const defaultOptions = {
-  string: ['env', 'host'],
+  string: ['env', 'host', 'base', 'shop'],
+  boolean: ['docker','php'],
   default: {
-    env: process.env.env || process.env.SHOPWARE_ENV || 'dev',
+    env: process.env.env || process.env.SHOPWARE_ENV || process.env.NODE_ENV || 'dev',
     host: process.env.host || process.env.SHOPWARE_HOST,
-    swdir: process.env.swdir,
-    shop: process.env.shop || 1
-  }
+    base: process.env.base,
+    shop: process.env.shop || 1,
+    docker: false,
+    php: true,
+    fpm: 'php:9000',
+  },
 };
 
 const options = minimist(process.argv.slice(2), defaultOptions);
 
-const getenv = (key, defaultValue) => (options[key] !== undefined && options[key]) || defaultValue;
+const getOption = (key, defaultValue) => (options[key] !== undefined && options[key]) || defaultValue;
 
-module.exports.getenv = getenv;
-module.exports.ENV = getenv('env');
-module.exports.swdir = getenv('swdir');
-module.exports.shop = getenv('shop');
+const isProd = () => ['prod', 'production'].includes(getOption('env').toLowerCase()) || process.argv.includes('-p');
+
+module.exports = {
+  getOption,
+  isProd,
+  isDev: () => !isProd(),
+  ENV: getOption('env'),
+  base: getOption('base'),
+  shop: getOption('shop'),
+};

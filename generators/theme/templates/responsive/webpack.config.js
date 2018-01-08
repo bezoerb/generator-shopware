@@ -2,8 +2,9 @@
 const path = require('path');
 const fs = require('fs-extra');
 const webpack = require('webpack');
-const {paths, dir, swconfig} = require('./tasks/helper/utils');
-const {ENV} = require('./tasks/helper/env');
+const ManifestPlugin = require('webpack-manifest-plugin');
+const {dir, swconfig} = require('./tasks/helper/utils');
+const {isProd} = require('./tasks/helper/env');
 
 const serve = process.argv.includes('serve');
 
@@ -32,6 +33,12 @@ const resolvePathFromConfig = componentPath => {
 };
 
 /**
+ * Locate filepath in node_modules
+ * @param componentPath
+ */
+const resolveNpmPath = componentPath => path.resolve(path.join(__dirname, 'node_modules', componentPath));
+
+/**
  * Main theme js files
  * @returns {Array<string>}
  */
@@ -48,10 +55,10 @@ const main = () => {
 };
 
 /**
- * Vendor js files (parent theme files)
+ * Swag js files (parent theme files)
  * @returns {Array<string>}
  */
-function vendor() {
+function swagJs() {
   const {js} = swconfig();
   const files = js.filter(file => !file.includes(`Frontend/${themeName}`));
   return [...new Set(files)].map(file => {
@@ -70,7 +77,7 @@ function vendor() {
 const provide = {
   $: 'jquery',
   jQuery: 'jquery',
-  'window.jQuery': 'jquery'
+  'window.jQuery': 'jquery',
 };
 
 /**
@@ -78,7 +85,9 @@ const provide = {
  * @type {{jquery: string}}
  */
 const aliases = {
-  jquery: resolvePathFromConfig('jquery.min.js')
+  jquery: resolvePathFromConfig('jquery.min.js') || resolveNpmPath('jquery'),
+  hyperform: resolveNpmPath('hyperform/dist/hyperform.cjs.js'),
+  Responsive: dir('root', 'themes/Frontend/Responsive/frontend/_public/src/js'),
 };
 
 /**
@@ -88,90 +97,118 @@ const config = {
   context: jsRoot,
   resolve: {
     modules: [
-      paths.root,
-      __dirname,
       jsRoot,
       path.join(__dirname, 'tests'),
-      'node_modules'
+      'node_modules',
     ],
-    alias: aliases
+    alias: aliases,
   },
 
   entry: {
-    app: [...main(), './main.js']
+    main: [...main(), './main.js'],
+    vendor: [
+      'wicg-inert',
+      'picturefill',
+      'hyperform',
+      'svg4everybody',
+    ],
   },
 
   output: {
     path: dir('template', 'frontend/_resources/js'),
     publicPath: '/web/cache/',
-    filename: 'main.js'
+    filename: 'main.js',
   },
 
   plugins: [
     new webpack.NoEmitOnErrorsPlugin(),
     new webpack.ProvidePlugin(provide),
+
     new webpack.optimize.ModuleConcatenationPlugin(),
-    new webpack.optimize.OccurrenceOrderPlugin()
+    new webpack.optimize.OccurrenceOrderPlugin(),
   ],
 
   module: {
     rules: [
       {
-        test: /jquery\.min\.js/,
+        test: /jquery(\.min)?\.js/,
         use: [{
           loader: 'expose-loader',
-          options: 'jQuery'
+          options: 'jQuery',
         }, {
           loader: 'expose-loader',
-          options: '$'
-        }]
+          options: '$',
+        }],
       },
       {
         test: /\.json$/,
-        use: ['json-loader']
-      }
-    ]
-  }
+        use: ['json-loader'],
+      },
+    ],
+  },
 };
 
-if (ENV === 'prod') {
+if (isProd()) {
   config.module.rules.push({
     test: /.js?$/,
-    exclude: /(node_modules)|(Frontend\/Bare)|(Frontend\/Responsive)|(\/plugins\/)/,
-    use: ['babel-loader?presets[]=env,cacheDirectory=true']
+    exclude: /(node_modules)|(Frontend\/Bare)|(Frontend\/Responsive)|(\/plugins\/)|(\/plugins-custom\/)/,
+    use: ['babel-loader?presets[]=env,cacheDirectory=true'],
   });
 
+  config.externals = {
+    jquery: 'jQuery'
+  };
+
+  config.plugins.push(new webpack.optimize.CommonsChunkPlugin({
+    names: ['vendor'],
+    filename: '[name]-[hash].js',
+    minChunks: Infinity,
+  }));
   config.plugins.push(new webpack.optimize.UglifyJsPlugin());
+  config.plugins.push(new webpack.DefinePlugin({NODE_ENV: 'production'}));
+
+  config.plugins.push(new ManifestPlugin({
+    fileName: '../rev-manifest.json',
+    basePath: 'frontend/_resources/js/',
+  }));
 } else {
   config.devtool = '#cheap-module-source-map';
-
-  config.entry.vendor = vendor();
 
   config.output = {
     path: dir('root', '/web/cache'),
     publicPath: '/web/cache/',
-    filename: 'dev.js'
+    filename: '[name].js',
   };
+
+  // Add dynamic scripts from shopware which shopware adds to the main file in production mode
+  // e.g. plugin js etc.
+  const swag = swagJs();
+  if (swag.length) {
+    config.entry.swag = swag;
+  } else {
+    fs.outputFile(dir('root', '/web/cache/swag.js'), '/* No custom shopware script files */');
+  }
 
   config.module.rules.push({
     test: /.js?$/,
-    exclude: /(node_modules)|(Frontend\/Bare)|(Frontend\/Responsive)|(\/plugins\/)/,
+    exclude: /(node_modules)|(Frontend\/Bare)|(Frontend\/Responsive)|(\/plugins\/)|(\/plugins-custom\/)/,
     use: [
-      'babel-loader?presets[]=env,cacheDirectory=true'
-    ]
+      'babel-loader?presets[]=env,cacheDirectory=true',
+    ],
   });
 
-  config.plugins = [
-    new webpack.optimize.CommonsChunkPlugin({name: 'vendor', filename: 'vendor.js'}),
-    ...config.plugins
-  ];
+  config.plugins.push(new webpack.optimize.CommonsChunkPlugin({
+    names: ['vendor'],
+    filename: '[name].js',
+    minChunks: Infinity,
+  }));
 }
 
 if (serve) {
-  config.entry.app = [
+  config.entry.main = [
     'webpack/hot/dev-server',
     'webpack-hot-middleware/client',
-    ...config.entry.app
+    ...config.entry.main,
   ];
 
   config.plugins.push(new webpack.HotModuleReplacementPlugin());

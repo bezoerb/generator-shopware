@@ -1,10 +1,10 @@
 Shopware 5 theme
 ======================
-This document describes the structure and the usage of the **bilder.de** theme
+This document describes the structure and the usage of the **<%= themename %>** theme
 
 Description
 -----------
-**BilderDe** is a childtheme of the Shopware 5 Bare theme with some manually
+**<%= themename %>** is a childtheme of the Shopware 5 Bare theme with some manually
 pulled in features from the default Responsive theme which are required . Like the default
 theme it is based on Smarty 3, HTML5 and CSS3 using the LESS processor.
 
@@ -77,7 +77,7 @@ When the host configuration is present in the environment, the shopware host is 
 
 Example `.env` file
 ```
-host=bilder.localhost
+host=mysubdomain.localhost
 ```
 
 Development
@@ -86,7 +86,7 @@ Development
 #### Filestructure
 
 ```
-BilderDe
+<%= themename %>
  ├── _private
  |   ├── smarty                 // Custom smarty functions
  |   └── snippets               // Theme specific text snippets

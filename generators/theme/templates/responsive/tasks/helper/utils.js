@@ -4,13 +4,15 @@ const parseurl = require('parseurl');
 const fs = require('fs-extra');
 const path = require('path');
 const php = require('php-proxy-middleware');
-const {flatten, first, last} = require('lodash');
+const phpFpm = require('php-fpm');
+const {flatten, first, last, find} = require('lodash');
+const fastCgi = require('fastcgi-client');
 const findUp = require('find-up');
 const globby = require('globby');
 const spawn = require('cross-spawn');
 const chalk = require('chalk');
 const execa = require('execa');
-const {ENV, swdir, shop} = require('./env');
+const {ENV, base, shop, getOption, isProd} = require('./env');
 const pkg = require('../../package.json');
 
 /**
@@ -28,11 +30,11 @@ const shopwareBase = () => {
   }
 
   const cmd = spawn.sync('git', ['rev-parse', '--show-toplevel']);
-  const base = swdir || (cmd.status === 0 && cmd.stdout.toString().trim()) || process.cwd();
-  const matches = globby.sync([file, `*/${file}`], {cwd: base});
+  const basePath = base || (cmd.status === 0 && cmd.stdout.toString().trim()) || process.cwd();
+  const matches = globby.sync([file, `*/${file}`], {cwd: basePath});
 
-  if (matches.length && fs.existsSync(path.join(base, matches[0]))) {
-    return path.dirname(path.join(base, matches[0]));
+  if (matches.length && fs.existsSync(path.join(basePath, matches[0]))) {
+    return path.dirname(path.join(basePath, matches[0]));
   }
 
   console.log(chalk.red('Error: could not resolve shopware directory'));
@@ -40,12 +42,26 @@ const shopwareBase = () => {
 };
 
 // Setup Paths
-const root = swdir || shopwareBase() || process.cwd();
+const root = base || shopwareBase() || process.cwd();
 const template = path.join(root, 'themes/Frontend', last(__dirname.match(/([^/]+)\/tasks\/helper/)) || pkg.name);
 const src = path.join(template, 'frontend/_public/src');
 const prod = path.join(template, 'frontend/_resources');
+const tmp = path.join(template, '.tmp');
 const web = path.join(root, 'web');
-const paths = {root, template, web, prod, src};
+const paths = {root, template, web, prod, src, tmp};
+
+// Ensure theme is symlinked
+if (!fs.existsSync(template)) {
+  if (!fs.existsSync(path.dirname(template))) {
+    throw new Error('Missing shopware frontend themes directory ' + path.dirname(template));
+  }
+
+  const src = path.join(__dirname, '../..');
+  const cwd = process.cwd();
+  process.chdir(path.dirname(template));
+  fs.ensureSymlinkSync(path.relative(path.dirname(template), src), template);
+  process.chdir(cwd);
+}
 
 /**
  * Helper to get the current host ip
@@ -82,12 +98,25 @@ const getMiddleware = env => {
     process.env.SHOPWARE_ENV = 'node';
     process.env.SHOPWARE_DEBUG = 0;
   }
+
+  if (getOption('docker')) {
+    const [host, port] = getOption('fpm').split(':');
+
+    return phpFpm({
+      root: paths.root,
+      host: host || 'php',
+      port: port || 9000,
+    }, {
+      script: '/project/shopware/shopware.php',
+    });
+  }
+
   return php({
     address: '127.0.0.1', // Which interface to bind to
     // eslint-disable-next-line camelcase
     ini: {max_execution_time: 60, variables_order: 'EGPCS'},
     root: paths.root,
-    router: path.join(paths.root, 'shopware.php')
+    router: path.join(paths.root, 'shopware.php'),
   });
 };
 
@@ -98,12 +127,24 @@ const getMiddleware = env => {
 function phpMiddleware(env = ENV) {
   const middleware = getMiddleware(env);
 
+  let base = [paths.root];
+  if (!isProd()) {
+    base = [paths.tmp, dir('tmp', 'frontend/_resources'), paths.src, paths.root];
+  }
+
+  // Helper function to check if file exists
+  const exists = pathname => find(base, root => {
+    const file = path.join(root, pathname);
+    return fs.existsSync(file) && fs.statSync(file).isFile();
+  }) !== undefined;
+
   return function (req, res, next) {
-    const obj = parseurl(req);
-    if (!/\.\w{2,}$/.test(obj.pathname) || /\.php/.test(obj.pathname)) {
-      middleware(req, res, next);
-    } else {
+    const {pathname} = parseurl(req);
+
+    if (/^\/browser-sync\//.test(pathname) || /^\/__webpack_hmr$/.test(pathname) || exists(pathname)) {
       next();
+    } else {
+      middleware(req, res, next);
     }
   };
 }
@@ -140,10 +181,54 @@ function dir(source, ...rest) {
 const swconfig = () => {
   const configFile = dir('web', `cache/config_${shop}.json`);
   if (!fs.existsSync(configFile)) {
-    console.log(`Missing config file. Run ${chalk.green('gulp sw:compile')}`);
+    console.log(`Missing config file. Run ${chalk.green('gulp sw:config')}`);
     process.exit(1);
   }
   return fs.readJsonSync(dir('web', `cache/config_${shop}.json`), {throws: false});
+};
+
+const fpmConsole = cmd => {
+  const [host, port] = getOption('fpm').split(':');
+
+  const fpm = new Promise((resolve, reject) => {
+    const loader = fastCgi({
+      host: host || 'php',
+      port: port || 9000,
+    });
+    loader.on('ready', () => resolve(loader));
+    loader.on('error', reject);
+  });
+
+  return fpm.then(php => new Promise((resolve, reject) => {
+    php.request({
+      REQUEST_METHOD: 'GET',
+      SCRIPT_FILENAME: '/project/bin/fcgi-console.php',
+      QUERY_STRING: JSON.stringify(cmd),
+    }, (err, request) => {
+      if (err) {
+        return reject(err);
+      }
+
+      let output = '';
+      let errors = '';
+
+      request.stdout.on('data', function (data) {
+        output += data.toString('utf8');
+      });
+
+      request.stderr.on('data', function (data) {
+        errors += data.toString('utf8');
+      });
+
+      request.stdout.on('end', function () {
+        if (errors) {
+          reject(new Error(errors));
+        }
+
+        resolve(output);
+      });
+    });
+  }));
 };
 
 /**
@@ -154,16 +239,29 @@ const swconfig = () => {
  * @returns {*}
  */
 const setHost = (cmd, host, port) => {
+  if (getOption('docker')) {
+    if (host && port) {
+      return fpmConsole(['sw:database:setup', '--steps', 'setupShop', `--host=${host}:${port}`]);
+    }
+    if (host) {
+      return fpmConsole(['sw:database:setup', '--steps', 'setupShop', `--host=${host}`]);
+    }
+  }
+
   host = (host || '').replace(/^.*:\/\//, '');
   const args = [dir('root', 'bin/console'), 'sw:database:setup', '--steps', 'setupShop'];
+
   if (host && port) {
     return cmd('php', [...args, `--host=${host}:${port}`]);
-  } else if (host) {
+  }
+
+  if (host) {
     return cmd('php', [...args, `--host=${host}`]);
   }
 
   return false;
 };
+
 
 /**
  * Sync and async host setter
@@ -179,5 +277,6 @@ module.exports = {
   dir,
   phpMiddleware,
   getHost,
-  paths
+  fpmConsole,
+  paths,
 };

@@ -2,7 +2,7 @@
 /**
  * Main theme js file
  */
-const debug = require('debug')('bilder:core');
+const debug = require('debug')('<%= themename %>:core');
 
 // Fix mobile touch styles
 document.addEventListener('touchstart', function () {}, true);
@@ -24,4 +24,4 @@ require('./components');
 // Initialize service worker
 require('./sw');
 
-debug('Theme "bilder" is initialized');
+debug('Theme "<%= themename %>" is initialized');

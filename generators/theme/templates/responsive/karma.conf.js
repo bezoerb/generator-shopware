@@ -1,11 +1,17 @@
 /* eslint-env node */
 // Karma configuration
+process.env.CHROME_BIN = require('puppeteer').executablePath();
+
 module.exports = function (config) {
   var logDir = '';
 
+  // remove common chunks plugins as this doesn't play well with karma
+  const wpc = require('./webpack.config');
+  wpc.plugins = wpc.plugins.filter(plugin => plugin.constructor.name !== 'CommonsChunkPlugin');
+
   config.set({
 
-    // base path that will be used to resolve all patterns (eg. files, exclude)
+    // Base path that will be used to resolve all patterns (eg. files, exclude)
     basePath: '',
 
     plugins: [
@@ -13,61 +19,69 @@ module.exports = function (config) {
       'karma-mocha',
       'karma-chai',
       'karma-mocha-reporter',
-      'karma-phantomjs-launcher'
+      'karma-chrome-launcher',
+      'karma-phantomjs-launcher',
     ],
 
-    // frameworks to use
+    // Frameworks to use
     // available frameworks: https://npmjs.org/browse/keyword/karma-adapter
     frameworks: ['mocha', 'chai'],
 
-    // list of files / patterns to load in the browser
+    // List of files / patterns to load in the browser
     files: [
-      {pattern: '../Responsive/frontend/_public/vendors/js/jquery/jquery.min.js', watched: false},
-      '../Responsive/frontend/_public/src/js/jquery.plugin-base.js',
-      'tests/spec/*spec.js'
+
+      'tests/spec/*spec.js',
     ],
 
     preprocessors: {
       // Add webpack as preprocessor
-      'tests/spec/*spec.js': ['webpack']
+      'tests/spec/*spec.js': ['webpack'],
     },
 
-    webpack: require('./webpack.config'),
+    webpack: wpc,
 
     webpackMiddleware: {
-      noInfo: true
+      noInfo: true,
     },
 
-    // test results reporter to use
+    // Test results reporter to use
     // possible values: 'dots', 'progress'
     // available reporters: https://npmjs.org/browse/keyword/karma-reporter
     reporters: ['mocha'],
 
-    // junit reporter
+    // Junit reporter
     junitReporter: {
       outputDir: logDir || '',
-      suite: ''
+      suite: '',
     },
 
-    // web server port
+    // Web server port
     port: 9876,
 
-    // enable / disable colors in the output (reporters and logs)
+    // Enable / disable colors in the output (reporters and logs)
     colors: true,
 
-    // level of logging
+    test: {a: 1},
+    // Level of logging
     // possible values: config.LOG_DISABLE || config.LOG_ERROR || config.LOG_WARN || config.LOG_INFO || config.LOG_DEBUG
     logLevel: config.LOG_INFO,
 
-    // enable / disable watching file and executing tests whenever any file changes
+    // Enable / disable watching file and executing tests whenever any file changes
     autoWatch: false,
 
-    // start these browsers
+    customLaunchers: {
+      ChromeHeadlessNoSandbox: {
+        base: 'ChromeHeadless',
+        flags: ['--no-sandbox'],
+      },
+    },
+
+    // Start these browsers
     // available browser launchers: https://npmjs.org/browse/keyword/karma-launcher
-    browsers: ['PhantomJS'],
+    browsers: ['ChromeHeadlessNoSandbox'],
 
     // Continuous Integration mode
     // if true, Karma captures browsers, runs the tests and exits
-    singleRun: true
+    singleRun: true,
   });
 };
