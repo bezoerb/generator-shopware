@@ -28,7 +28,7 @@
   },
   "devDependencies": {
     "coveralls": "^2.13.1",
-    "eslint": "^4.1.0",
+    "eslint": "^4.16.0",
     "eslint-config-xo-space": "^0.16.0",
     "jest": "^20.0.4",
     "jest-cli": "^20.0.0",
@@ -70,6 +70,11 @@
       "jest": true,
       "node": true
     }
+  },
+  "prettier": {
+    "singleQuote": true,
+    "printWidth": 120,
+    "bracketSpacing": false
   },
   "repository": "bezoerb/generator-shopware",
   "license": "MIT"
