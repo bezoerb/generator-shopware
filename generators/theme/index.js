@@ -3,7 +3,6 @@ const path = require('path');
 const Generator = require('yeoman-generator');
 const chalk = require('chalk');
 const yosay = require('yosay');
-const inquirer = require('inquirer');
 const globby = require('globby');
 const upperFirst = require('lodash/upperFirst');
 const camelCase = require('lodash/camelCase');
@@ -223,7 +222,7 @@ module.exports = class extends Generator {
                 return connection.query(
                   `UPDATE s_core_shops SET template_id = ${result.id}, document_template_id = ${
                     result.id
-                    } WHERE ${'`default`'} = 1`
+                  } WHERE ${'`default`'} = 1`
                 );
               })
               .then(() => connection.destroy());
@@ -251,7 +250,7 @@ module.exports = class extends Generator {
       );
     }
 
-    // promises.push(new Promise((resolve, reject) => {
+    // Promises.push(new Promise((resolve, reject) => {
     //   const connection = mysql.createConnection({
     //     host: this.props.dbhost,
     //     port: this.props.dbport,

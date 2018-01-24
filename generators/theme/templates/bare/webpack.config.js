@@ -2,7 +2,7 @@
 const path = require('path');
 const fs = require('fs-extra');
 const webpack = require('webpack');
-var ManifestPlugin = require('webpack-manifest-plugin');
+const ManifestPlugin = require('webpack-manifest-plugin');
 const {dir, swconfig} = require('./tasks/helper/utils');
 const {isProd} = require('./tasks/helper/env');
 
